@@ -45,7 +45,10 @@ Protocol 2                           # Pakai protocol versi 2
 # === User Access Control ===
 PermitRootLogin no                  # Disable login langsung sebagai root
 AllowUsers 0xbyalak dapit           # Hanya user tertentu yang boleh akses lewat SSH
+AllowGroups klandestin              # Mengijinkan group akses
 Match User dapit                    # Bikin aturan yang berlaku hanya untuk user tertentu
+        PasswordAuthentication yes
+Match Groups klandestin             # Bikin aturan yang berlaku hanya untuk group tertentu
         PasswordAuthentication yes
 
 # === Authentication ===
