@@ -108,5 +108,6 @@ systemctl enable --now isc-dhcp-server
 systemctl start isc-dhcp-server
 ```
 ### Cek koneksi
-> Pastikan tidak ada koneksi internet lansung dari laptop ke internet
+lihat ip laptop:
 
+![Screenshot 2025-06-04 001531](https://github.com/user-attachments/assets/8fd47b81-0d7f-4113-84fd-0beeed3c3ce0)
