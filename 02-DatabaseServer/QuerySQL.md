@@ -153,11 +153,11 @@ WHERE category_id IN (SELECT id FROM categories WHERE name = 'Elektronik');
 
 ## 7. Manajemen User MariaDB / MySQL
 ```sql
-CREATE USER 'davit'@'localhost' IDENTIFIED BY 'PasswordKuat123!';  -- Buat user baru
-GRANT ALL PRIVILEGES ON db_name.* TO 'davit'@'localhost';  -- Kasih akses
-ALTER USER 'davit'@'localhost' IDENTIFIED BY 'BaruBanget123!';  -- Ganti password
-REVOKE ALL PRIVILEGES ON db_name.* FROM 'davit'@'localhost';  -- Cabut akses
-DROP USER 'davit'@'localhost';  -- Hapus user
+CREATE USER 'dapit'@'localhost' IDENTIFIED BY 'PasswordKuat123!';  -- Buat user baru
+GRANT ALL PRIVILEGES ON db_name.* TO 'dapit'@'localhost';  -- Kasih akses
+ALTER USER 'dapit'@'localhost' IDENTIFIED BY 'BaruBanget123!';  -- Ganti password
+REVOKE ALL PRIVILEGES ON db_name.* FROM 'dapit'@'localhost';  -- Cabut akses
+DROP USER 'dapit'@'localhost';  -- Hapus user
 ```
 
 ---
