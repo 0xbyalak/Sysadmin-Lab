@@ -57,7 +57,7 @@ Ubah dan tambahkan:
    client max protocol = SMB3                   # Batasi maksimal protokol SMB ke versi SMB3 (versi terbaru & terenkripsi)
 
 [share]
-   path = /srv/samba/secure                     # Direktori yang akan dishare
+   path = /srv/samba/share                      # Direktori yang akan dishare
    valid users = @staff                         # Hanya user dalam grup 'staff' yang boleh akses
    read only = no                               # Akses full (bisa baca dan tulis)
    browsable = no                               # Tidak tampil di 'Network', harus diakses manual
@@ -65,7 +65,6 @@ Ubah dan tambahkan:
    create mask = 0770                           # File baru: hanya bisa diakses owner & grup
    directory mask = 0770                        # Folder baru: sama, hanya owner & grup
    vfs objects = full_audit                     # Aktifkan modul audit (logging aktivitas file)
-   full_audit:success = open opendir write unlink  # Log aktivitas open, browse, edit, hapus
    full_audit:prefix = %u|%I|%S                 # Format log: user|IP|share_name
 ```
 > Hilangkan komentar lebih dulu
@@ -81,4 +80,54 @@ Cek konfigurasi:
 testparm
 ```
 
+## Konfigurasi Firewall
+> Ijinkan hanya dari jaringan internal
+
+```bash
+ufw allow from 192.168.1.0/24 to any port 445 proto tcp
+ufw deny in to any port 445
+ufw reload
+```
+
+## Install & Konfigurasi fail2ban (Cegah Brute Force)
+
+```bash
+sudo apt install fail2ban
+```
+
+### Buat filter:
+
+```bash
+sudo nano /etc/fail2ban/filter.d/samba-auth.conf
+```
+
+```ini
+[Definition]
+failregex = .*Authentication for user \[.*\] -> \[.*\] FAILED.*
+```
+
+### Buat jail:
+
+```bash
+sudo nano /etc/fail2ban/jail.d/samba.conf
+```
+
+```ini
+[samba-auth]
+enabled = true
+port = 445
+filter = samba-auth
+logpath = /var/log/samba/*.log
+maxretry = 5
+findtime = 600
+bantime = 3600
+```
+
+```bash
+sudo systemctl restart fail2ban
+```
+
+## Pengujian
+Dari windows:
+```bash
 
