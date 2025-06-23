@@ -92,7 +92,7 @@ ufw reload
 ## Install & Konfigurasi fail2ban (Cegah Brute Force)
 
 ```bash
-sudo apt install fail2ban
+apt install fail2ban -y
 ```
 
 ### Buat filter:
