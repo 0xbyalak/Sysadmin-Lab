@@ -33,39 +33,54 @@ Penjelasan:
 
 Backup & Buka file konfigurasi:
 ```bash
-cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+truncate -s 0 /etc/samba/smb.conf
 nano /etc/samba/smb.conf
 ```
 
 Ubah dan tambahkan:
 ```bash
 [global]
-   server string = File sharing SAMBA server    # Nama server yang tampil di jaringan
-   workgroup = WORKGROUP                        # Nama workgroup Windows (default: WORKGROUP)
-   security = user                              # Autentikasi berdasarkan user Samba
-   map to guest = never                         # Tolak akses guest, wajib login user valid
-   smb encrypt = required                       # Wajibkan enkripsi SMB (SMB3) untuk keamanan
-   server signing = mandatory                   # Aktifkan signing untuk integritas data
-   log file = /var/log/samba/%m.log             # Simpan log per client (berdasarkan NetBIOS name)
-   log level = 2                                # Tingkat log detail (cukup untuk audit ringan)
-   max log size = 1000                          # Maks ukuran log 1000 KB (1 MB)
-   interfaces = lo eth0                         # Hanya dengarkan di loopback dan eth0
-   bind interfaces only = yes                   # Jangan dengarkan di interface lain
-   disable netbios = yes                        # Nonaktifkan NetBIOS (port 137/138)
-   smb ports = 445                              # Hanya gunakan port modern (445), tanpa 139
-   client min protocol = SMB2                   # Paksa klien menggunakan minimal protokol SMB2 (lebih aman dari SMB1)
-   client max protocol = SMB3                   # Batasi maksimal protokol SMB ke versi SMB3 (versi terbaru & terenkripsi)
+   server string = Samba Server
+   workgroup = WORKGROUP
+
+   security = user                     # User-based authentication
+   map to guest = never                # Tolak akses guest sepenuhnya
+
+   smb encrypt = required              # Wajib enkripsi (SMB3)
+   server signing = mandatory          # Wajib signing (data integrity)
+
+   log file = /var/log/samba/%m.log
+   log level = 2                       # Cukup untuk audit ringan
+   max log size = 1000
+
+   interfaces = lo eth0                # Batasi interface
+   bind interfaces only = yes
+
+   disable netbios = yes               # Nonaktifkan NetBIOS
+   smb ports = 445                     # Hanya port 445
+
+   client min protocol = SMB2          # Minimal SMB2 (disable SMB1)
+   client max protocol = SMB3          # Maksimal SMB3
+   server min protocol = SMB2
+   server max protocol = SMB3
+
+   passdb backend = tdbsam             # Backend default, bisa ganti ke LDAP/AD jika perlu
+   name resolve order = host wins bcast
+
+   load printers = no                  # Non-printer server
+   printing = bsd
+   printcap name = /dev/null
 
 [share]
-   path = /srv/samba/share                      # Direktori yang akan dishare
-   valid users = @staff                         # Hanya user dalam grup 'staff' yang boleh akses
-   read only = no                               # Akses full (bisa baca dan tulis)
-   browsable = no                               # Tidak tampil di 'Network', harus diakses manual
-   guest ok = no                                # Tidak izinkan akses guest sama sekali
-   create mask = 0770                           # File baru: hanya bisa diakses owner & grup
-   directory mask = 0770                        # Folder baru: sama, hanya owner & grup
-   vfs objects = full_audit                     # Aktifkan modul audit (logging aktivitas file)
-   full_audit:prefix = %u|%I|%S                 # Format log: user|IP|share_name
+   path = /srv/samba/share
+   valid users = @staff
+   read only = no
+   create mask = 0770
+   directory mask = 0770
+   guest ok = no
+   browsable = no
+
 ```
 > Hilangkan komentar lebih dulu
 ## Restart service
@@ -128,6 +143,20 @@ sudo systemctl restart fail2ban
 ```
 
 ## Pengujian
-Dari windows:
+Dari Linux:
 ```bash
+root@klandestin:/srv/samba# smbclient //192.168.0.101/sambashare -U 0xbyalak
+
+Password for [WORKGROUP\0xbyalak]:
+Try "help" to get a list of possible commands.
+smb: \>
+```
+
+Dari Windows:
+
+![Screenshot 2025-06-21 232939](https://github.com/user-attachments/assets/939b3360-be00-4052-96bf-1a3d3ee40f7a)
+
+![Screenshot 2025-06-23 123819](https://github.com/user-attachments/assets/ef63f1be-ad51-4107-bbe4-59bdec5c580a)
+
+![Screenshot 2025-06-23 141446](https://github.com/user-attachments/assets/7858c66b-a2b3-423a-b8d2-e67bdc821e16)
 
