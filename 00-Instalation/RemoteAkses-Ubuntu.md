@@ -48,7 +48,7 @@ AllowUsers 0xbyalak dapit           # Hanya user tertentu yang boleh akses lewat
 AllowGroups klandestin              # Mengijinkan group akses
 Match User dapit                    # Bikin aturan yang berlaku hanya untuk user tertentu
         PasswordAuthentication yes
-Match Groups klandestin             # Bikin aturan yang berlaku hanya untuk group tertentu
+Match Group klandestin             # Bikin aturan yang berlaku hanya untuk group tertentu
         PasswordAuthentication yes
 
 # === Authentication ===
